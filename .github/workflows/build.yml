@@ -1,0 +1,24 @@
+name: Build IPQ60xx U-Boot
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install Deps
+        run: |
+          sudo apt update
+          sudo apt install -y build-essential bison flex libssl-dev gcc-aarch64-linux-gnu
+      - name: Build
+        run: |
+          export ARCH=arm64
+          export CROSS_COMPILE=aarch64-linux-gnu-
+          make ipq6018_defconfig  # 这里替换成你的设备配置
+          make -j$(nproc)
+      - name: Upload
+        uses: actions/upload-artifact@v3
+        with:
+          name: u-boot-bin
+          path: u-boot.bin
